@@ -27,7 +27,8 @@ export function CatalogViewer() {
     const checkMobile = () => {
       if (typeof window !== 'undefined') {
         setIsMobile(window.innerWidth < 768)
-        setContainerWidth(Math.min(window.innerWidth - 32, 600))
+        // Use full width minus padding for mobile, ensuring PDF fits completely
+        setContainerWidth(window.innerWidth - 32)
         // Detect WeChat browser
         const ua = window.navigator.userAgent.toLowerCase()
         setIsWeChat(ua.includes('micromessenger'))
@@ -149,41 +150,42 @@ export function CatalogViewer() {
                 </div>
               ) : isMobile ? (
                 // Mobile - use PDF.js for better compatibility
-                <Document
-                  file={pdfUrl}
-                  onLoadSuccess={onDocumentLoadSuccess}
-                  loading={
-                    <div className="flex items-center justify-center p-8">
-                      <div className="text-center">
-                        <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
-                        <p className="text-muted-foreground">Loading PDF...</p>
-                      </div>
-                    </div>
-                  }
-                  error={
-                    <div className="flex items-center justify-center p-8">
-                      <div className="text-center space-y-4">
-                        <FileText className="h-16 w-16 mx-auto text-red-400" />
-                        <div>
-                          <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
-                          <p className="text-muted-foreground mb-4">Please download to view</p>
-                          <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
-                            <Download className="mr-2 h-4 w-4" />
-                            Download PDF
-                          </Button>
+                <div className="w-full p-2">
+                  <Document
+                    file={pdfUrl}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    loading={
+                      <div className="flex items-center justify-center p-8">
+                        <div className="text-center">
+                          <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
+                          <p className="text-muted-foreground">Loading PDF...</p>
                         </div>
                       </div>
-                    </div>
-                  }
-                >
-                  <Page
-                    pageNumber={pageNumber}
-                    width={containerWidth}
-                    scale={typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1}
-                    renderTextLayer={true}
-                    renderAnnotationLayer={true}
-                  />
-                </Document>
+                    }
+                    error={
+                      <div className="flex items-center justify-center p-8">
+                        <div className="text-center space-y-4">
+                          <FileText className="h-16 w-16 mx-auto text-red-400" />
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
+                            <p className="text-muted-foreground mb-4">Please download to view</p>
+                            <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
+                              <Download className="mr-2 h-4 w-4" />
+                              Download PDF
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <Page
+                      pageNumber={pageNumber}
+                      width={containerWidth}
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
+                    />
+                  </Document>
+                </div>
               ) : (
                 // Desktop - use native browser iframe for better performance
                 <div className="w-full h-full relative">
