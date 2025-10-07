@@ -81,49 +81,30 @@ export function CatalogViewer() {
               </Button>
             )}
 
-            <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full`}>
-              {isMobile ? (
-                // Mobile view - Show download button instead of iframe
-                <div className="flex items-center justify-center h-full bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-background">
-                  <div className="text-center space-y-6 p-8">
-                    <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-xl">
-                      <FileText className="h-12 w-12 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-2xl mb-3">Critical Minerals Product Brochure</h3>
-                      <p className="text-muted-foreground mb-6 text-base">
-                        Download the PDF to view on your mobile device
-                      </p>
-                      <Button onClick={handleDownload} size="lg" className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg text-base px-8 py-6">
-                        <Download className="mr-2 h-5 w-5" />
-                        Download PDF
-                      </Button>
-                    </div>
+            <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative`}>
+              {/* PDF Viewer - Using iframe for PDF display */}
+              <iframe
+                src={`https://docs.google.com/viewer?url=${encodeURIComponent(window.location.origin + pdfUrl)}&embedded=true`}
+                className="w-full h-full border-0"
+                title="Product Catalog"
+              />
+
+              {/* Fallback message if PDF doesn't load */}
+              <div className="absolute inset-0 flex items-center justify-center bg-muted -z-10">
+                <div className="text-center space-y-4 p-8">
+                  <FileText className="h-16 w-16 mx-auto text-muted-foreground" />
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">Product Catalog</h3>
+                    <p className="text-muted-foreground mb-4">
+                      {"Loading PDF..."}
+                    </p>
+                    <Button onClick={handleDownload} variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Catalog
+                    </Button>
                   </div>
                 </div>
-              ) : (
-                <>
-                  {/* PDF Viewer - Using iframe for PDF display on desktop */}
-                  <iframe src={pdfUrl} className="w-full h-full border-0" title="Product Catalog" />
-
-                  {/* Fallback message if PDF doesn't load */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted -z-10">
-                    <div className="text-center space-y-4 p-8">
-                      <FileText className="h-16 w-16 mx-auto text-muted-foreground" />
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Product Catalog</h3>
-                        <p className="text-muted-foreground mb-4">
-                          {"Loading PDF..."}
-                        </p>
-                        <Button onClick={handleDownload} variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Download Catalog
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
+              </div>
             </div>
           </div>
         </Card>
