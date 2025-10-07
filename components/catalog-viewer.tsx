@@ -8,8 +8,8 @@ import { Document, Page, pdfjs } from "react-pdf"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "react-pdf/dist/Page/TextLayer.css"
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+// Configure PDF.js worker - use local file for better compatibility and reliability
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
 
 export function CatalogViewer() {
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -17,16 +17,20 @@ export function CatalogViewer() {
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
   const [containerWidth, setContainerWidth] = useState<number>(600)
+  const [isWeChat, setIsWeChat] = useState(false)
 
   // In production, replace this with your actual PDF URL
   const pdfUrl = "/LONGi CRITICAL MINERALS PRODUCT BROCHURE ( 3rd Edition) 0825-Latest_compressed.pdf"
 
-  // Detect mobile devices and set container width
+  // Detect mobile devices, WeChat browser and set container width
   useEffect(() => {
     const checkMobile = () => {
       if (typeof window !== 'undefined') {
         setIsMobile(window.innerWidth < 768)
         setContainerWidth(Math.min(window.innerWidth - 32, 600))
+        // Detect WeChat browser
+        const ua = window.navigator.userAgent.toLowerCase()
+        setIsWeChat(ua.includes('micromessenger'))
       }
     }
     checkMobile()
@@ -124,40 +128,69 @@ export function CatalogViewer() {
             )}
 
             <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative overflow-auto flex items-center justify-center bg-gray-100`}>
-              <Document
-                file={pdfUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading={
-                  <div className="flex items-center justify-center p-8">
-                    <div className="text-center">
-                      <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
-                      <p className="text-muted-foreground">Loading PDF...</p>
-                    </div>
-                  </div>
-                }
-                error={
-                  <div className="flex items-center justify-center p-8">
-                    <div className="text-center space-y-4">
-                      <FileText className="h-16 w-16 mx-auto text-red-400" />
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
-                        <p className="text-muted-foreground mb-4">Please download to view</p>
-                        <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
-                          <Download className="mr-2 h-4 w-4" />
+              {isWeChat ? (
+                // WeChat browser fallback - use native PDF viewer or download
+                <div className="flex items-center justify-center p-8 w-full h-full">
+                  <div className="text-center space-y-4 max-w-md">
+                    <FileText className="h-20 w-20 mx-auto text-blue-500" />
+                    <div>
+                      <h3 className="font-semibold text-xl mb-3">View Product Catalog</h3>
+                      <p className="text-muted-foreground mb-6">
+                        For the best viewing experience in WeChat, please download the PDF or open in your browser.
+                      </p>
+                      <div className="flex flex-col gap-3">
+                        <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600 w-full py-6 text-base">
+                          <Download className="mr-2 h-5 w-5" />
                           Download PDF
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => window.open(pdfUrl, '_blank')}
+                          className="w-full py-6 text-base"
+                        >
+                          <Maximize2 className="mr-2 h-5 w-5" />
+                          Open in Browser
                         </Button>
                       </div>
                     </div>
                   </div>
-                }
-              >
-                <Page
-                  pageNumber={pageNumber}
-                  width={isMobile ? containerWidth : undefined}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
-                />
-              </Document>
+                </div>
+              ) : (
+                <Document
+                  file={pdfUrl}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  loading={
+                    <div className="flex items-center justify-center p-8">
+                      <div className="text-center">
+                        <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
+                        <p className="text-muted-foreground">Loading PDF...</p>
+                      </div>
+                    </div>
+                  }
+                  error={
+                    <div className="flex items-center justify-center p-8">
+                      <div className="text-center space-y-4">
+                        <FileText className="h-16 w-16 mx-auto text-red-400" />
+                        <div>
+                          <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
+                          <p className="text-muted-foreground mb-4">Please download to view</p>
+                          <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
+                            <Download className="mr-2 h-4 w-4" />
+                            Download PDF
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Page
+                    pageNumber={pageNumber}
+                    width={isMobile ? containerWidth : undefined}
+                    renderTextLayer={true}
+                    renderAnnotationLayer={true}
+                  />
+                </Document>
+              )}
             </div>
           </div>
         </Card>

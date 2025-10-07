@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: "Longi Magnet Australia | Product Catalog",
   description: "Explore our comprehensive range of magnetic solutions and products",
   generator: "v0.app",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 }
 
 export default function RootLayout({
