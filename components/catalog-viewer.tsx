@@ -3,11 +3,19 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { FileText, Download, Maximize2, X } from "lucide-react"
+import { FileText, Download, Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { Document, Page, pdfjs } from "react-pdf"
+import "react-pdf/dist/esm/Page/AnnotationLayer.css"
+import "react-pdf/dist/esm/Page/TextLayer.css"
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 export function CatalogViewer() {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [numPages, setNumPages] = useState<number>(0)
+  const [pageNumber, setPageNumber] = useState<number>(1)
 
   // In production, replace this with your actual PDF URL
   const pdfUrl = "/LONGi CRITICAL MINERALS PRODUCT BROCHURE ( 3rd Edition) 0825-Latest_compressed.pdf"
@@ -21,6 +29,10 @@ export function CatalogViewer() {
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    setNumPages(numPages)
+  }
 
   const handleDownload = () => {
     const link = document.createElement("a")
@@ -57,6 +69,32 @@ export function CatalogViewer() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {numPages > 0 && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mr-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
+                    disabled={pageNumber <= 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="hidden sm:inline">
+                    Page {pageNumber} / {numPages}
+                  </span>
+                  <span className="sm:hidden">
+                    {pageNumber}/{numPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPageNumber((prev) => Math.min(prev + 1, numPages))}
+                    disabled={pageNumber >= numPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
               <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 bg-transparent">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Download</span>
@@ -81,30 +119,41 @@ export function CatalogViewer() {
               </Button>
             )}
 
-            <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative`}>
-              {/* PDF Viewer - Using iframe for PDF display */}
-              <iframe
-                src={`https://docs.google.com/viewer?url=${encodeURIComponent(window.location.origin + pdfUrl)}&embedded=true`}
-                className="w-full h-full border-0"
-                title="Product Catalog"
-              />
-
-              {/* Fallback message if PDF doesn't load */}
-              <div className="absolute inset-0 flex items-center justify-center bg-muted -z-10">
-                <div className="text-center space-y-4 p-8">
-                  <FileText className="h-16 w-16 mx-auto text-muted-foreground" />
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Product Catalog</h3>
-                    <p className="text-muted-foreground mb-4">
-                      {"Loading PDF..."}
-                    </p>
-                    <Button onClick={handleDownload} variant="outline">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Catalog
-                    </Button>
+            <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative overflow-auto flex items-center justify-center bg-gray-100`}>
+              <Document
+                file={pdfUrl}
+                onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <div className="flex items-center justify-center p-8">
+                    <div className="text-center">
+                      <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
+                      <p className="text-muted-foreground">Loading PDF...</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+                }
+                error={
+                  <div className="flex items-center justify-center p-8">
+                    <div className="text-center space-y-4">
+                      <FileText className="h-16 w-16 mx-auto text-red-400" />
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
+                        <p className="text-muted-foreground mb-4">Please download to view</p>
+                        <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download PDF
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  width={isMobile ? Math.min(window.innerWidth - 32, 600) : undefined}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                />
+              </Document>
             </div>
           </div>
         </Card>
