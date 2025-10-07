@@ -1,5 +1,5 @@
 import { Hero } from "@/components/hero"
-import { CatalogViewer } from "@/components/catalog-viewer"
+import { CatalogViewer } from "@/components/catalog-viewer-wrapper"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 
