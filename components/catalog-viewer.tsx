@@ -16,14 +16,18 @@ export function CatalogViewer() {
   const [isMobile, setIsMobile] = useState(false)
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
+  const [containerWidth, setContainerWidth] = useState<number>(600)
 
   // In production, replace this with your actual PDF URL
   const pdfUrl = "/LONGi CRITICAL MINERALS PRODUCT BROCHURE ( 3rd Edition) 0825-Latest_compressed.pdf"
 
-  // Detect mobile devices
+  // Detect mobile devices and set container width
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth < 768)
+        setContainerWidth(Math.min(window.innerWidth - 32, 600))
+      }
     }
     checkMobile()
     window.addEventListener("resize", checkMobile)
@@ -149,7 +153,7 @@ export function CatalogViewer() {
               >
                 <Page
                   pageNumber={pageNumber}
-                  width={isMobile ? Math.min(window.innerWidth - 32, 600) : undefined}
+                  width={isMobile ? containerWidth : undefined}
                   renderTextLayer={true}
                   renderAnnotationLayer={true}
                 />
