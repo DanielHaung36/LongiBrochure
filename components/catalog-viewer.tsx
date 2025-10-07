@@ -128,8 +128,27 @@ export function CatalogViewer() {
             )}
 
             <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative overflow-auto flex items-center justify-center bg-gray-100`}>
-              {isMobile ? (
-                // Mobile - use PDF.js for better touch interaction and page navigation
+              {isWeChat ? (
+                // WeChat - direct download button
+                <div className="flex items-center justify-center p-8 w-full h-full">
+                  <div className="text-center space-y-6 max-w-md">
+                    <FileText className="h-24 w-24 mx-auto text-blue-500" />
+                    <div>
+                      <h3 className="font-bold text-xl mb-3">Product Brochure</h3>
+                      <p className="text-muted-foreground mb-6 px-4">Click the button below to download the complete product catalog</p>
+                      <Button
+                        onClick={handleDownload}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-6 text-lg shadow-lg"
+                        size="lg"
+                      >
+                        <Download className="mr-2 h-5 w-5" />
+                        Download PDF
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : isMobile ? (
+                // Mobile - use PDF.js for better compatibility
                 <Document
                   file={pdfUrl}
                   onLoadSuccess={onDocumentLoadSuccess}
