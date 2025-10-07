@@ -179,6 +179,7 @@ export function CatalogViewer() {
                   <Page
                     pageNumber={pageNumber}
                     width={containerWidth}
+                    scale={typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1}
                     renderTextLayer={true}
                     renderAnnotationLayer={true}
                   />
