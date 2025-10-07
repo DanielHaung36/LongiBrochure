@@ -181,6 +181,7 @@ export function CatalogViewer() {
                     <Page
                       pageNumber={pageNumber}
                       width={containerWidth}
+                      scale={2.0}
                       renderTextLayer={true}
                       renderAnnotationLayer={true}
                     />
