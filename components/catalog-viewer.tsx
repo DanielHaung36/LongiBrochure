@@ -4,13 +4,7 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FileText, Download, Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react"
-import { Document, Page, pdfjs } from "react-pdf"
-import "react-pdf/dist/Page/AnnotationLayer.css"
-import "react-pdf/dist/Page/TextLayer.css"
-
-// Configure PDF.js worker - use CDN for better compatibility
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`
+import { FileText, Download, Maximize2, X } from "lucide-react"
 
 // PDF catalog options
 const PDF_CATALOGS = [
@@ -35,42 +29,33 @@ const PDF_CATALOGS = [
 export function CatalogViewer() {
   const [activeCatalog, setActiveCatalog] = useState(PDF_CATALOGS[0].id)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const [numPages, setNumPages] = useState<number>(0)
-  const [pageNumber, setPageNumber] = useState<number>(1)
-  const [containerWidth, setContainerWidth] = useState<number>(600)
   const [isWeChat, setIsWeChat] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   // Get current catalog
   const currentCatalog = PDF_CATALOGS.find(cat => cat.id === activeCatalog) || PDF_CATALOGS[0]
   const pdfUrl = currentCatalog.url
 
-  // Reset page number when switching catalogs
+  // Detect WeChat browser and mobile device
   useEffect(() => {
-    setPageNumber(1)
-    setNumPages(0)
-  }, [activeCatalog])
-
-  // Detect mobile devices, WeChat browser and set container width
-  useEffect(() => {
-    const checkMobile = () => {
+    const checkEnvironment = () => {
       if (typeof window !== 'undefined') {
-        setIsMobile(window.innerWidth < 768)
-        // Use full width minus padding for mobile, ensuring PDF fits completely
-        setContainerWidth(window.innerWidth - 32)
         // Detect WeChat browser
         const ua = window.navigator.userAgent.toLowerCase()
         setIsWeChat(ua.includes('micromessenger'))
+
+        // Detect mobile device (any mobile browser including iOS, Android)
+        const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua) ||
+                               window.innerWidth < 768
+        setIsMobile(isMobileDevice)
       }
     }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    checkEnvironment()
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setNumPages(numPages)
-  }
+    // Re-check on window resize
+    window.addEventListener('resize', checkEnvironment)
+    return () => window.removeEventListener('resize', checkEnvironment)
+  }, [])
 
   const handleDownload = () => {
     const link = document.createElement("a")
@@ -124,40 +109,16 @@ export function CatalogViewer() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-              {numPages > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mr-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
-                    disabled={pageNumber <= 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="hidden sm:inline">
-                    Page {pageNumber} / {numPages}
-                  </span>
-                  <span className="sm:hidden">
-                    {pageNumber}/{numPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPageNumber((prev) => Math.min(prev + 1, numPages))}
-                    disabled={pageNumber >= numPages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
                 <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 bg-transparent">
                   <Download className="h-4 w-4" />
                   <span className="hidden sm:inline">Download</span>
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)} className="gap-2">
-                  {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                  <span className="hidden sm:inline">{isFullscreen ? "Exit" : "Fullscreen"}</span>
-                </Button>
+                {!isWeChat && (
+                  <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)} className="gap-2">
+                    {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                    <span className="hidden sm:inline">{isFullscreen ? "Exit" : "Fullscreen"}</span>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -177,68 +138,64 @@ export function CatalogViewer() {
 
             <div className={`${isFullscreen ? "h-screen" : "h-[600px] md:h-[800px]"} w-full relative overflow-auto flex items-center justify-center bg-gray-100`}>
               {isWeChat ? (
-                // WeChat - direct download button
-                <div className="flex items-center justify-center p-8 w-full h-full">
-                  <div className="text-center space-y-6 max-w-md">
-                    <FileText className="h-24 w-24 mx-auto text-blue-500" />
-                    <div>
-                      <h3 className="font-bold text-xl mb-3">Product Brochure</h3>
-                      <p className="text-muted-foreground mb-6 px-4">Click the button below to download the complete product catalog</p>
-                      <Button
-                        onClick={handleDownload}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-6 text-lg shadow-lg"
-                        size="lg"
-                      >
-                        <Download className="mr-2 h-5 w-5" />
-                        Download PDF
-                      </Button>
+                // WeChat - show fake preview with download prompt
+                <div className="w-full h-full relative bg-white">
+                  {/* Mock catalog preview */}
+                  <div className="absolute inset-0 flex flex-col">
+                    {/* Header area with branding */}
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8 text-center">
+                      <h1 className="text-2xl font-bold mb-2">{currentCatalog.fullTitle}</h1>
+                      <p className="text-blue-100">LONGi Magnet Australia</p>
+                      <p className="text-sm text-blue-200 mt-2">{currentCatalog.edition}</p>
+                    </div>
+
+                    {/* Mock content area */}
+                    <div className="flex-1 p-6 space-y-4 bg-gray-50">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="h-3 bg-gray-200 rounded w-3/4 mb-3"></div>
+                        <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                      </div>
+
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded mb-3"></div>
+                        <div className="h-3 bg-gray-200 rounded w-2/3 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-full"></div>
+                      </div>
+
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="h-20 bg-gradient-to-br from-purple-100 to-purple-200 rounded"></div>
+                          <div className="h-20 bg-gradient-to-br from-green-100 to-green-200 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Overlay with download prompt */}
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                      <div className="bg-white rounded-2xl p-8 m-6 text-center shadow-2xl max-w-sm">
+                        <FileText className="h-20 w-20 mx-auto text-blue-500 mb-4" />
+                        <h3 className="font-bold text-xl mb-3">Complete Product Catalog</h3>
+                        <p className="text-muted-foreground mb-6 text-sm">
+                          Download the full brochure to view detailed specifications and product information
+                        </p>
+                        <Button
+                          onClick={handleDownload}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-6 text-lg shadow-lg w-full"
+                          size="lg"
+                        >
+                          <Download className="mr-2 h-5 w-5" />
+                          Download PDF
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ) : isMobile ? (
-                // Mobile - use PDF.js for better compatibility
-                <div className="w-full p-2">
-                  <Document
-                    file={pdfUrl}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    loading={
-                      <div className="flex items-center justify-center p-8">
-                        <div className="text-center">
-                          <FileText className="h-16 w-16 mx-auto text-muted-foreground animate-pulse mb-4" />
-                          <p className="text-muted-foreground">Loading PDF...</p>
-                        </div>
-                      </div>
-                    }
-                    error={
-                      <div className="flex items-center justify-center p-8">
-                        <div className="text-center space-y-4">
-                          <FileText className="h-16 w-16 mx-auto text-red-400" />
-                          <div>
-                            <h3 className="font-semibold text-lg mb-2">Unable to load PDF</h3>
-                            <p className="text-muted-foreground mb-4">Please download to view</p>
-                            <Button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-600">
-                              <Download className="mr-2 h-4 w-4" />
-                              Download PDF
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    }
-                  >
-                    <Page
-                      pageNumber={pageNumber}
-                      width={containerWidth}
-                      scale={2.0}
-                      renderTextLayer={true}
-                      renderAnnotationLayer={true}
-                    />
-                  </Document>
-                </div>
               ) : (
-                // Desktop - use native browser iframe for better performance
+                // All other browsers - use PDF.js viewer from CDN
                 <div className="w-full h-full relative">
                   <iframe
-                    src={pdfUrl}
+                    src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(window.location.origin + pdfUrl)}`}
                     className="w-full h-full border-0"
                     title="Product Catalog"
                   />
