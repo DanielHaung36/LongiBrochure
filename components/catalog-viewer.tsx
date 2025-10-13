@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText, Download, Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { Document, Page, pdfjs } from "react-pdf"
 import "react-pdf/dist/Page/AnnotationLayer.css"
@@ -11,7 +12,28 @@ import "react-pdf/dist/Page/TextLayer.css"
 // Configure PDF.js worker - use CDN for better compatibility
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`
 
+// PDF catalog options
+const PDF_CATALOGS = [
+  {
+    id: "critical-minerals",
+    title: "Critical Minerals",
+    fullTitle: "Critical Minerals Product",
+    edition: "3rd Edition",
+    url: "/LONGi CRITICAL MINERALS PRODUCT BROCHURE ( 3rd Edition) 0825-Latest_compressed.pdf",
+    downloadName: "LONGi-Critical-Minerals-Product-Brochure.pdf"
+  },
+  {
+    id: "mining-industry",
+    title: "Mining Industry",
+    fullTitle: "Mining Industry Product",
+    edition: "3rd Edition",
+    url: "/2024 海外矿山英文（第三版） Mining Indutry Product Brochure.pdf",
+    downloadName: "LONGi-Mining-Industry-Product-Brochure.pdf"
+  }
+]
+
 export function CatalogViewer() {
+  const [activeCatalog, setActiveCatalog] = useState(PDF_CATALOGS[0].id)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [numPages, setNumPages] = useState<number>(0)
@@ -19,8 +41,15 @@ export function CatalogViewer() {
   const [containerWidth, setContainerWidth] = useState<number>(600)
   const [isWeChat, setIsWeChat] = useState(false)
 
-  // In production, replace this with your actual PDF URL
-  const pdfUrl = "/LONGi CRITICAL MINERALS PRODUCT BROCHURE ( 3rd Edition) 0825-Latest_compressed.pdf"
+  // Get current catalog
+  const currentCatalog = PDF_CATALOGS.find(cat => cat.id === activeCatalog) || PDF_CATALOGS[0]
+  const pdfUrl = currentCatalog.url
+
+  // Reset page number when switching catalogs
+  useEffect(() => {
+    setPageNumber(1)
+    setNumPages(0)
+  }, [activeCatalog])
 
   // Detect mobile devices, WeChat browser and set container width
   useEffect(() => {
@@ -46,7 +75,7 @@ export function CatalogViewer() {
   const handleDownload = () => {
     const link = document.createElement("a")
     link.href = pdfUrl
-    link.download = "LONGi-Critical-Minerals-Product-Brochure.pdf"
+    link.download = currentCatalog.downloadName
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -67,17 +96,34 @@ export function CatalogViewer() {
         </div>
 
         <Card className="overflow-hidden shadow-xl">
-          <div className="bg-card border-b border-border p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-accent" />
+          {/* Catalog Tabs */}
+          <div className="bg-card border-b border-border p-4">
+            <Tabs value={activeCatalog} onValueChange={setActiveCatalog} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4 h-auto">
+                {PDF_CATALOGS.map((catalog) => (
+                  <TabsTrigger
+                    key={catalog.id}
+                    value={catalog.id}
+                    className="py-3 px-2 text-xs sm:text-sm font-medium whitespace-normal leading-tight"
+                  >
+                    {catalog.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+
+            {/* Catalog Info and Controls */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-card-foreground text-sm sm:text-base">{currentCatalog.fullTitle} Brochure</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{currentCatalog.edition}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-card-foreground">Critical Minerals Product Brochure</h3>
-                <p className="text-sm text-muted-foreground">3rd Edition</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
               {numPages > 0 && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mr-2">
                   <Button
@@ -104,14 +150,15 @@ export function CatalogViewer() {
                   </Button>
                 </div>
               )}
-              <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 bg-transparent">
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Download</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)} className="gap-2">
-                {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                <span className="hidden sm:inline">{isFullscreen ? "Exit" : "Fullscreen"}</span>
-              </Button>
+                <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 bg-transparent">
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Download</span>
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)} className="gap-2">
+                  {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  <span className="hidden sm:inline">{isFullscreen ? "Exit" : "Fullscreen"}</span>
+                </Button>
+              </div>
             </div>
           </div>
 
