@@ -228,7 +228,7 @@ export function CatalogViewer() {
         </Card>
 
         {/* Quick actions */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-8 hover:shadow-lg transition-all hover:scale-105 border-2 bg-gradient-to-br from-purple-50/50 to-white dark:from-purple-950/20 dark:to-background">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg">
