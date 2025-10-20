@@ -87,15 +87,15 @@ export function CatalogViewer() {
       </div>
     );
   }
-  
+
   return (
     <section id="catalog" className="py-2 px-4 ">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
+          {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
             <FileText className="h-4 w-4" />
             Product Catalog
-          </div>
+          </div> */}
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Explore Our Products</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Browse through our comprehensive catalog featuring detailed specifications and applications
