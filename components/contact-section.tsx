@@ -58,16 +58,18 @@ export function ContactSection() {
         <h3 className="font-bold text-2xl mb-6">Contact Our Engineers</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center justify-center">
-          <div className="flex flex-col items-center space-y-2">
-            <img src="/wubiao-weng.png" alt="Wubiao Weng" className="w-32 h-32 object-contain rounded-lg shadow-md" />
-            <p className="font-semibold text-base">Wubiao Weng</p>
-          </div>
+   
 
           <div className="flex flex-col items-center space-y-2">
             <img src="/weijun-wang.jpg" alt="Weijun Wang" className="w-32 h-32 object-contain rounded-lg shadow-md" />
             <p className="font-semibold text-base">Weijun Wang</p>
           </div>
 
+       <div className="flex flex-col items-center space-y-2">
+            <img src="/wubiao-weng.png" alt="Wubiao Weng" className="w-32 h-32 object-contain rounded-lg shadow-md" />
+            <p className="font-semibold text-base">Wubiao Weng</p>
+          </div>
+          
           <div className="flex flex-col items-center space-y-2">
             <img src="/zixuan-lu.png" alt="Zixuan Lu" className="w-32 h-32 object-contain rounded-lg shadow-md" />
             <p className="font-semibold text-base">Zixuan Lu</p>
