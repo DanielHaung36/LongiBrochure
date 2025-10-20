@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { ArrowDown } from "lucide-react"
-
+import {CatalogViewer} from "@/components/catalog-viewer"
 export function Hero() {
   const scrollToCatalog = () => {
     document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" })
   }
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center px-4 py-20 overflow-hidden">
+    <section className="relative min-h-[85vh] flex  px-4 py-15 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 right-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
@@ -39,9 +39,9 @@ export function Hero() {
             <ArrowDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
-
+      <CatalogViewer />
         {/* Services */}
-        <div className="pt-12 grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 max-w-4xl mx-auto">
+        {/* <div className="pt-12 grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 max-w-4xl mx-auto">
           <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 hover:from-blue-500/20 hover:to-blue-600/10 transition-all duration-300 hover:scale-105 border border-blue-500/20">
             <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
               <div className="w-4 h-4 rounded-full bg-blue-500" />
@@ -72,7 +72,7 @@ export function Hero() {
             </div>
             <span className="text-xs md:text-sm text-center font-semibold text-foreground">Testwork Proposal</span>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   )

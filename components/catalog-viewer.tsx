@@ -67,7 +67,7 @@ export function CatalogViewer() {
   }
 
   return (
-    <section id="catalog" className="py-20 px-4 bg-secondary/30">
+    <section id="catalog" className="py-2 px-4 ">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
@@ -99,12 +99,12 @@ export function CatalogViewer() {
 
             {/* Catalog Info and Controls */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+              <div className="ml-2 flex items-center gap-3">
+                {/* <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
                   <FileText className="h-5 w-5 text-accent" />
-                </div>
+                </div> */}
                 <div>
-                  <h3 className="font-semibold text-card-foreground text-sm sm:text-base">{currentCatalog.fullTitle} Brochure</h3>
+                  <h3 className="font-semibold text-card-foreground text-sm sm:text-base text-nowrap">{currentCatalog.fullTitle} Brochure</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">{currentCatalog.edition}</p>
                 </div>
               </div>
@@ -113,12 +113,12 @@ export function CatalogViewer() {
                   <Download className="h-4 w-4" />
                   <span className="hidden sm:inline">Download</span>
                 </Button>
-                {!isWeChat && (
+                {/* {!isWeChat && (
                   <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)} className="gap-2">
                     {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                     <span className="hidden sm:inline">{isFullscreen ? "Exit" : "Fullscreen"}</span>
                   </Button>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@ export function CatalogViewer() {
             </div>
           </Card>
 
-          <Card className="p-8 hover:shadow-lg transition-all hover:scale-105 border-2 bg-gradient-to-br from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-background">
+          {/* <Card className="p-8 hover:shadow-lg transition-all hover:scale-105 border-2 bg-gradient-to-br from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-background">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg">
                 <Maximize2 className="h-8 w-8 text-white" />
@@ -241,7 +241,7 @@ export function CatalogViewer() {
                 <p className="text-sm text-muted-foreground leading-relaxed">Immersive reading experience on any device</p>
               </div>
             </div>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </section>
