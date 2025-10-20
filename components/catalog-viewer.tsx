@@ -44,15 +44,11 @@ export function CatalogViewer() {
 
  const [src, setSrc] = useState('');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // 生成完整 URL，例如 https://yourdomain.com/xxx.pdf
-      const fullUrl = window.location.origin + pdfUrl;
-      const viewer = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(fullUrl)}`;
-      setSrc(viewer);
-    }
+   useEffect(() => {
+    // 本地路径，拼接 public 下的 viewer
+    const viewerUrl = `/pdfjs/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+    setSrc(viewerUrl);
   }, [pdfUrl]);
-
 
   // Detect WeChat browser and mobile device
   useEffect(() => {
@@ -84,6 +80,14 @@ export function CatalogViewer() {
     document.body.removeChild(link)
   }
 
+  if (!src) {
+    return (
+      <div className="flex items-center justify-center w-full h-full text-gray-500">
+        Loading PDF viewer...
+      </div>
+    );
+  }
+  
   return (
     <section id="catalog" className="py-2 px-4 ">
       <div className="max-w-6xl mx-auto">
