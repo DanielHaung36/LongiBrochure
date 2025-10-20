@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText, Download, Maximize2, X } from "lucide-react"
+import { log } from "console"
 
 // PDF catalog options
 const PDF_CATALOGS = [
@@ -35,7 +36,7 @@ export function CatalogViewer() {
   // Get current catalog
   const currentCatalog = PDF_CATALOGS.find(cat => cat.id === activeCatalog) || PDF_CATALOGS[0]
   const pdfUrl = currentCatalog.url
-
+  console.log("PDF URL:", pdfUrl);
   // Detect WeChat browser and mobile device
   useEffect(() => {
     const checkEnvironment = () => {
@@ -195,7 +196,7 @@ export function CatalogViewer() {
                 // All other browsers - use PDF.js viewer from CDN
                 <div className="w-full h-full relative">
                   <iframe
-                    src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(window.location.origin + pdfUrl)}`}
+                    src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`}
                     className="w-full h-full border-0"
                     title="Product Catalog"
                   />
