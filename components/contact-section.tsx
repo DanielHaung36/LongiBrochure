@@ -24,7 +24,7 @@ export function ContactSection() {
                   <p className="text-base font-semibold text-foreground mb-6">support@ljmagnet.com.au</p>
                 </div>
                 <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-base py-6" asChild>
-                  <a href="mailto:info@ljmagnet.com">Send Email</a>
+                  <a href="mailto:support@ljmagnet.com.au">Send Email</a>
                 </Button>
               </div>
             </div>
