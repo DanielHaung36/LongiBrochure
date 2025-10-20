@@ -33,10 +33,27 @@ export function CatalogViewer() {
   const [isWeChat, setIsWeChat] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
+
+
+
+
   // Get current catalog
   const currentCatalog = PDF_CATALOGS.find(cat => cat.id === activeCatalog) || PDF_CATALOGS[0]
   const pdfUrl = currentCatalog.url
   console.log("PDF URL:", pdfUrl);
+
+ const [src, setSrc] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // 生成完整 URL，例如 https://yourdomain.com/xxx.pdf
+      const fullUrl = window.location.origin + pdfUrl;
+      const viewer = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(fullUrl)}`;
+      setSrc(viewer);
+    }
+  }, [pdfUrl]);
+
+
   // Detect WeChat browser and mobile device
   useEffect(() => {
     const checkEnvironment = () => {
@@ -196,7 +213,7 @@ export function CatalogViewer() {
                 // All other browsers - use PDF.js viewer from CDN
                 <div className="w-full h-full relative">
                   <iframe
-                    src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`}
+                    src={src}
                     className="w-full h-full border-0"
                     title="Product Catalog"
                   />
