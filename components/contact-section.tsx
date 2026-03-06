@@ -80,7 +80,7 @@ export function ContactSection() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center justify-center">
                     <div className="flex flex-col items-center space-y-2">
                       <img
-                        src="/weijun-wang.jpg"
+                        src="/QR_Weijun_Wang.png"
                         alt="Weijun Wang"
                         className="w-32 h-32 object-contain rounded-lg shadow-md"
                       />
@@ -89,7 +89,7 @@ export function ContactSection() {
 
                     <div className="flex flex-col items-center space-y-2">
                       <img
-                        src="/wubiao-weng.png"
+                        src="/QR_Wubiao_Weng.png"
                         alt="Wubiao Weng"
                         className="w-32 h-32 object-contain rounded-lg shadow-md"
                       />
@@ -98,7 +98,7 @@ export function ContactSection() {
 
                     <div className="flex flex-col items-center space-y-2">
                       <img
-                        src="/zixuan-lu.png"
+                        src="/QR_Zixuan_Lu.png"
                         alt="Zixuan Lu"
                         className="w-32 h-32 object-contain rounded-lg shadow-md"
                       />
