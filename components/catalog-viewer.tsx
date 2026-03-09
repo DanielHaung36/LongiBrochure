@@ -24,6 +24,54 @@ const PDF_CATALOGS = [
     edition: "3rd Edition",
     url: "/2024 海外矿山英文（第三版） Mining Indutry Product Brochure.pdf",
     downloadName: "LONGi-Mining-Industry-Product-Brochure.pdf"
+  },
+  {
+    id: "ash-analyzer",
+    title: "Ash Analyzer",
+    fullTitle: "Ash Analyzer",
+    edition: "",
+    url: "/Ash Analyzer.pdf",
+    downloadName: "LONGi-Ash-Analyzer.pdf"
+  },
+  {
+    id: "hmds",
+    title: "HMDS",
+    fullTitle: "HMDS",
+    edition: "",
+    url: "/HMDS.pdf",
+    downloadName: "LONGi-HMDS.pdf"
+  },
+  {
+    id: "ljk-tramp-magnet",
+    title: "LJK Tramp Magnet",
+    fullTitle: "LJK Tramp Magnet",
+    edition: "",
+    url: "/LJK Tramp Magnet.pdf",
+    downloadName: "LONGi-LJK-Tramp-Magnet.pdf"
+  },
+  {
+    id: "lpnc",
+    title: "LPNC",
+    fullTitle: "LPNC",
+    edition: "",
+    url: "/LPNC.pdf",
+    downloadName: "LONGi-LPNC.pdf"
+  },
+  {
+    id: "sfc",
+    title: "SFC",
+    fullTitle: "SFC",
+    edition: "",
+    url: "/SFC.pdf",
+    downloadName: "LONGi-SFC.pdf"
+  },
+  {
+    id: "tramp-magnet",
+    title: "Tramp Magnet",
+    fullTitle: "Tramp Magnet",
+    edition: "",
+    url: "/Tramp Magnet.pdf",
+    downloadName: "LONGi-Tramp-Magnet.pdf"
   }
 ]
 
@@ -106,12 +154,12 @@ export function CatalogViewer() {
           {/* Catalog Tabs */}
           <div className="bg-card border-b border-border p-4">
             <Tabs value={activeCatalog} onValueChange={setActiveCatalog} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4 h-auto">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4 h-auto gap-1">
                 {PDF_CATALOGS.map((catalog) => (
                   <TabsTrigger
                     key={catalog.id}
                     value={catalog.id}
-                    className="py-3 px-2 text-xs sm:text-sm font-medium whitespace-normal leading-tight"
+                    className="py-2 px-1.5 text-[11px] sm:text-xs font-medium whitespace-normal leading-tight"
                   >
                     {catalog.title}
                   </TabsTrigger>
@@ -127,7 +175,7 @@ export function CatalogViewer() {
                 </div> */}
                 <div>
                   <h3 className="font-semibold text-card-foreground text-sm sm:text-base text-nowrap">{currentCatalog.fullTitle} Brochure</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{currentCatalog.edition}</p>
+                  {currentCatalog.edition && <p className="text-xs sm:text-sm text-muted-foreground">{currentCatalog.edition}</p>}
                 </div>
               </div>
               <div className="flex items-center gap-2">
